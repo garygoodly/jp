@@ -1,0 +1,113 @@
+
+Japanese Learning System Master Prompt (Month 3 onward)
+
+Use this prompt at the start of each new month.
+
+------------------------------------------------------------
+GOAL:
+Guide me toward near-native Japanese ability. Estimated timeline: ~30 months (2.5 years) with structured daily learning.
+
+Start each new month by pasting the following:
+
+------------------------------------------------------------
+MASTER PROMPT FOR MONTH X:
+
+I am beginning Month X of my structured Japanese program.  
+Apply ALL rules below automatically.
+
+1. DAILY STRUCTURE (5 PARTS, EACH SENT SEPARATELY)
+Part 1: Review Test
+- Test yesterday’s grammar and vocabulary.
+- Vocabulary shown in Chinese; I translate to Japanese.
+- Include 2–3 micro listening/reading recall items.
+- Monday also includes review of last Monday.
+
+Part 2: Essential Vocabulary List
+- 12-15 new high-frequency JLPT N5–N1 words (depend on difficult and progress).
+- Must include verbs, nouns, adverbs, collocations.
+- ALL vocabulary must appear in examples and practice.
+
+Part 3: New Grammar Lesson
+- Teach one grammar structure per day.
+- Include meaning, nuance, context, politeness notes.
+- Provide 6–8 example sentences using today’s vocabulary.
+
+Part 4: Practice Exercise
+- Full-sentence translation tasks (no blanks).
+- All vocabulary used.
+- Include 1 advanced output task requiring grammar synthesis.
+
+Part 5: Summary & Tomorrow Preview
+- Recap grammar usage.
+
+------------------------------------------------------------
+2. WEEKLY STRUCTURE
+- Monday: last-week review.
+- Friday: cumulative review of Days 1–5, 6–10, 11–15, or 16–20.
+
+------------------------------------------------------------
+3. MONTHLY STRUCTURE (20 days)
+Days 1–9: New content
+Day 10: Cumulative exam for Days 1–9
+Days 11–19: New content
+Day 20: Mini exam for Days 10–19
+
+------------------------------------------------------------
+4. MULTI-MONTH MEMORY PROTECTION (EXPANDED SPACED REVIEW)
+Add the following:
+
+A. Month X → Month X+1 Start Review (Day 1 Monday)
+- Review vocabulary from last month.
+- Full reinforcement of grammar from last month.
+- Listening + production tasks using older material.
+
+B. Mid-Month Reinforcement (Day 15)
+- Mixed review of Month X and Month X−1 vocab + grammar.
+
+C. Quarterly Exams (Month 3, 6, 9, 12, 15, 18, 21, 24, 27, 30)
+- Vocab + grammar + listening + reading + writing.
+
+D. Daily Backward Integration
+- At least one example sentence uses older grammar.
+- At least one practice item requires older vocabulary.
+
+E. Weekly Category Review
+- Review vocabulary by semantic field.
+
+F. Memory Health Check (Every Friday)
+- 10 vocab from Month X−2
+- 10 vocab from Month X−1
+- 10 vocab from Month X
+- Produce sentences; evaluate retention.
+
+------------------------------------------------------------
+5. GRAMMAR PROGRESSION
+Months 3–4: N3 + early N2  
+Months 5–6: Full N2  
+Months 7–10: N1 grammar  
+Months 11–30: Native-like nuance training, business expression, listening-speed mastery.
+
+------------------------------------------------------------
+6. LISTENING
+Provide me what I can enhance this part (Youtube link, ...)
+
+------------------------------------------------------------
+7. OUTPUT REQUIREMENTS
+Daily: 2 translations + 1 open expression  
+Weekly: 5–6 sentence writing task  
+Monthly: scenario-based speaking/writing task
+
+------------------------------------------------------------
+8. RULES
+- Never ask what to do next.
+- Deliver daily lessons in 5 clearly separated messages.
+- Always state: “Month X Day Y Part Z”.
+- Use a professional, instructional tone.
+- All vocabulary must appear in practice.
+
+------------------------------------------------------------
+START SIGNAL:
+When I say: “Start Month X Day 1 Part 1”, begin the lesson sequence.
+
+------------------------------------------------------------
+END OF PROMPT
