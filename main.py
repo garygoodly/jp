@@ -200,6 +200,13 @@ class StudyTab(ttk.Frame):
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.listbox.config(yscrollcommand=scrollbar.set)
         self.listbox.bind("<<ListboxSelect>>", self.on_listbox_select)
+        # Keyboard navigation
+        self.listbox.bind("<Up>", self.on_key_up)
+        self.listbox.bind("<Down>", self.on_key_down)
+        self.listbox.bind("<Return>", self.on_key_enter)
+
+        # Also bind Enter at the tab level (so it still works if focus is on buttons)
+        self.bind_all("<Return>", self.on_key_enter)
 
         # Details text area
         detail_frame = ttk.Frame(main_frame)
@@ -249,10 +256,12 @@ class StudyTab(ttk.Frame):
         elif values:
             self.level_var.set(values[0])
 
-    def _refresh_listbox(self):
+    def _refresh_listbox(self, select_index: Optional[int] = None):
         """
         Refresh the listbox according to current JLPT level.
         Also update mastered count and row colors.
+
+        :param select_index: If provided, re-select this list index after refresh.
         """
         self.listbox.delete(0, tk.END)
         self.index_map = []
@@ -272,7 +281,6 @@ class StudyTab(ttk.Frame):
                 mastered_col = col
                 break
 
-        # If we have key_candidates, we will use them for display.
         if self.key_candidates:
             has_any = any(col in fdf.columns for col in self.key_candidates)
             if not has_any:
@@ -283,7 +291,6 @@ class StudyTab(ttk.Frame):
                 )
                 return
 
-            # Build list and index map
             for pos, (_, row) in enumerate(fdf.iterrows()):
                 display_text = ""
                 for col in self.key_candidates:
@@ -291,7 +298,6 @@ class StudyTab(ttk.Frame):
                         display_text = str(row[col])
                         break
 
-                # Skip rows that have no usable display text
                 if display_text == "":
                     continue
 
@@ -299,7 +305,6 @@ class StudyTab(ttk.Frame):
                 self.index_map.append(pos)
                 total_visible += 1
 
-                # Color based on mastered state
                 is_mastered = False
                 if mastered_col is not None and mastered_col in row.index:
                     val = row[mastered_col]
@@ -313,7 +318,6 @@ class StudyTab(ttk.Frame):
                 else:
                     self.listbox.itemconfig(idx, foreground="black")
         else:
-            # Fallback: single key column from StudyData
             key_col = self.study_data.key_column
             if key_col not in fdf.columns:
                 messagebox.showerror(
@@ -326,6 +330,7 @@ class StudyTab(ttk.Frame):
                 value = row.get(key_col, "")
                 if pd.isna(value):
                     continue
+
                 display_text = str(value)
                 self.listbox.insert(tk.END, display_text)
                 self.index_map.append(pos)
@@ -344,13 +349,14 @@ class StudyTab(ttk.Frame):
                 else:
                     self.listbox.itemconfig(idx, foreground="black")
 
-        # Update master counter label
-        self.count_label.config(
-            text=f"Mastered: {mastered_visible} / {total_visible}"
-        )
+        self.count_label.config(text=f"Mastered: {mastered_visible} / {total_visible}")
 
-        # Clear details area
-        self._set_detail_text("")
+        # Preserve selection if requested
+        if select_index is not None and self.listbox.size() > 0:
+            select_index = max(0, min(select_index, self.listbox.size() - 1))
+            self._select_list_index(select_index)
+        else:
+            self._set_detail_text("")
 
     def on_level_change(self, _event=None):
         """
@@ -510,15 +516,29 @@ class StudyTab(ttk.Frame):
             except tk.TclError:
                 pass
 
-        # Refresh detail display and counts
-        self.show_selected()
-        self._refresh_listbox()
+        # Refresh while preserving the current list index (so we can advance reliably)
+        keep_index = self.current_index
+        self._refresh_listbox(select_index=keep_index)
 
     def on_known(self):
         """
-        Mark the current item as mastered (True).
+        Mark the current item as mastered (True), then jump to the next item
+        relative to what was just mastered.
         """
+        # Capture current index BEFORE update/refresh
+        cur = 0
+        if self.listbox.curselection():
+            cur = self.listbox.curselection()[0]
+        elif self.current_index is not None:
+            cur = self.current_index
+
+        self.current_index = cur
         self._set_mastered_state(True)
+
+        # Jump to the next item after the one we just mastered
+        next_idx = min(cur + 1, max(0, self.listbox.size() - 1))
+        self._select_list_index(next_idx)
+
         messagebox.showinfo("Great!", "Marked as mastered.")
 
     def on_unknown(self):
@@ -527,6 +547,70 @@ class StudyTab(ttk.Frame):
         """
         self._set_mastered_state(False)
         messagebox.showinfo("Review", "Marked as NOT mastered.")
+
+    def _select_list_index(self, list_index: int):
+        """
+        Select the given listbox index, scroll into view, and display details.
+        """
+        if list_index < 0 or list_index >= self.listbox.size():
+            return
+
+        self.listbox.selection_clear(0, tk.END)
+        self.listbox.selection_set(list_index)
+        self.listbox.activate(list_index)
+        self.listbox.see(list_index)
+
+        self.current_index = list_index
+        self.show_selected()
+
+    def select_next_item(self):
+        """
+        Move selection to next list item (if any), show details.
+        """
+        if self.listbox.size() == 0:
+            return
+
+        cur = 0
+        if self.listbox.curselection():
+            cur = self.listbox.curselection()[0]
+
+        nxt = min(cur + 1, self.listbox.size() - 1)
+        self._select_list_index(nxt)
+
+    def select_prev_item(self):
+        """
+        Move selection to previous list item (if any), show details.
+        """
+        if self.listbox.size() == 0:
+            return
+
+        cur = 0
+        if self.listbox.curselection():
+            cur = self.listbox.curselection()[0]
+
+        prv = max(cur - 1, 0)
+        self._select_list_index(prv)
+
+    def on_key_up(self, _event=None):
+        """
+        Up arrow: select previous item.
+        """
+        self.select_prev_item()
+        return "break"
+
+    def on_key_down(self, _event=None):
+        """
+        Down arrow: select next item.
+        """
+        self.select_next_item()
+        return "break"
+
+    def on_key_enter(self, _event=None):
+        """
+        Enter: mark as mastered (I knew it) and auto-advance.
+        """
+        self.on_known()
+        return "break"
 
 
 class CategoryProgressView(ttk.Frame):
